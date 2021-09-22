@@ -59,22 +59,22 @@ class MyUser(AbstractUser):
 User = get_user_model()
 
 
-class ProfileUser(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='profile',
-        verbose_name='Profile user',
-    )
-    subscriptions = models.ManyToManyField(
-        MyUser,
-        related_name='followers',
-    )
-    favourites = models.ManyToManyField(
-        Recipe,
-        related_name='fvorites',
-    )
-    shopping_list = models.ManyToManyField(
-        Recipe,
-        related_name='shopping',
-    )
+# class ProfileUser(models.Model):
+#     user = models.ForeignKey(
+#         User,
+#         on_delete=models.CASCADE,
+#         related_name='profile',
+#         verbose_name='Profile user',
+#     )
+#     subscriptions = models.ManyToManyField(
+#         MyUser,
+#         related_name='followers',
+#     )
+#     favourites = models.ManyToManyField(
+#         Recipe,
+#         related_name='fvorites',
+#     )
+#     shopping_list = models.ManyToManyField(
+#         Recipe,
+#         related_name='shopping',
+#     )
