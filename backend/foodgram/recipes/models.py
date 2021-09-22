@@ -65,3 +65,24 @@ class IngredientValue(models.Model):
     value = models.IntegerField(
         validators=[MinValueValidator(1), ]
     )
+
+
+class ProfileUser(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='profile',
+        verbose_name='Profile user',
+    )
+    subscriptions = models.ManyToManyField(
+        User,
+        related_name='followers',
+    )
+    favourites = models.ManyToManyField(
+        Recipe,
+        related_name='fvorites',
+    )
+    shopping_list = models.ManyToManyField(
+        Recipe,
+        related_name='shopping',
+    )

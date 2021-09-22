@@ -4,9 +4,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models.fields import CharField
 
 
-# from recipes.models import Recipe
-
-
 class RoleChoises(models.TextChoices):
     ADMIN = 'admin'
     USER = 'user'
@@ -55,26 +52,3 @@ class MyUser(AbstractUser):
 
     def __str__(self):
         return '\n'.join([self.username])
-
-User = get_user_model()
-
-
-# class ProfileUser(models.Model):
-#     user = models.ForeignKey(
-#         User,
-#         on_delete=models.CASCADE,
-#         related_name='profile',
-#         verbose_name='Profile user',
-#     )
-#     subscriptions = models.ManyToManyField(
-#         MyUser,
-#         related_name='followers',
-#     )
-#     favourites = models.ManyToManyField(
-#         Recipe,
-#         related_name='fvorites',
-#     )
-#     shopping_list = models.ManyToManyField(
-#         Recipe,
-#         related_name='shopping',
-#     )
