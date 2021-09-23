@@ -31,6 +31,7 @@ class MyUser(AbstractUser):
     )
 
     role = CharField(
+        max_length=50,
         choices=RoleChoises.choices,
         default=RoleChoises.USER,
         verbose_name='User role',

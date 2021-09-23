@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import MyUser
+from .profile import ProfileUser
 
 
 class MyUserAdmin(admin.ModelAdmin):
@@ -10,4 +11,9 @@ class MyUserAdmin(admin.ModelAdmin):
     fields = ("first_name", "last_name", "email", "username", "password", "role")
 
 
+class ProfileUserAdmin(admin.ModelAdmin):
+    list_display = ("user", )
+
+
 admin.site.register(MyUser, MyUserAdmin)
+admin.site.register(ProfileUser, ProfileUserAdmin)

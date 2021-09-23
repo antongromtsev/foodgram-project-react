@@ -11,7 +11,9 @@ class MyUserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField('get_is_subscribed')
 
     def get_is_subscribed(self, obj):
-        return self.user.profile.filter(pk=obj.pk).exists()
+        x = self.context['request'].user
+        x = x.profile.all()
+        return x.filter(pk=obj.pk).exists()
 
     class Meta:
         model = User
@@ -21,5 +23,5 @@ class MyUserSerializer(serializers.ModelSerializer):
             'username',
             'first_name',
             'last_name',
-            'is_subscribed'
+            'is_subscribed',
         )
