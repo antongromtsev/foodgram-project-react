@@ -65,11 +65,14 @@ class Recipe(models.Model):
     )
 
     def get_ingredients(self):
-        x = self.ingredients.get()
-        return self.ingredients.get
+        return ', '.join([ingredient.name for ingredient in self.ingredients.all()])
 
     def get_tags(self):
-        return self.tags.name
+        return ', '.join([tags.name for tags in self.tags.all()])
+
+    def __str__(self):
+        return self.name
+
 
 
 class IngredientValue(models.Model):
