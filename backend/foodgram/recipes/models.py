@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator 
+from django.core.validators import MinValueValidator
 
 
 User = get_user_model()
@@ -17,12 +17,21 @@ class Tag(models.Model):
         unique=True
     )
 
+    def __str__(self):
+        return self.name
+
 
 class Ingredient(models.Model):
     name = models.CharField(
         max_length=200,
     )
-    measurement_unit = models
+    measurement_unit = models.CharField(
+        max_length=50,
+        default='г'
+    )
+
+    def __str__(self):
+        return self.name
 
 
 class Recipe(models.Model):
@@ -45,12 +54,22 @@ class Recipe(models.Model):
     tags = models.ManyToManyField(
         Tag,
         related_name='recipe',
-        # null=True,
-        # on_delete=models.SET_NULL,
     )
     cooking_time = models.IntegerField(
         validators=[MinValueValidator(1), ]
     )
+    pub_date = models.DateTimeField(
+        auto_now_add=True,
+        db_index=True,
+        verbose_name='Publication date',
+    )
+
+    def get_ingredients(self):
+        x = self.ingredients.get()
+        return self.ingredients.get
+
+    def get_tags(self):
+        return self.tags.name
 
 
 class IngredientValue(models.Model):
