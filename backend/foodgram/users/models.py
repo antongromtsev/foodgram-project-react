@@ -10,12 +10,12 @@ class RoleChoises(models.TextChoices):
 
 class MyUser(AbstractUser):
     first_name = models.CharField(
-        max_length=50,
+        max_length=150,
         blank=True,
         verbose_name='First name',
     )
     last_name = models.CharField(
-        max_length=50,
+        max_length=150,
         blank=True,
         verbose_name='Last name',
     )
@@ -25,13 +25,12 @@ class MyUser(AbstractUser):
         verbose_name='e-mail',
     )
     username = models.CharField(
-        max_length=50,
+        max_length=150,
         unique=True,
         verbose_name='Username',
     )
 
     role = CharField(
-        max_length=50,
         choices=RoleChoises.choices,
         default=RoleChoises.USER,
         verbose_name='User role',
