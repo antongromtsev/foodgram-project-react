@@ -74,7 +74,6 @@ class Recipe(models.Model):
         return self.name
 
 
-
 class IngredientValue(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
