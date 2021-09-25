@@ -14,7 +14,8 @@ class Tag(models.Model):
         max_length=7,
     )
     slug = models.SlugField(
-        unique=True
+        max_length=200,
+        unique=True,
     )
 
     def __str__(self):
@@ -83,6 +84,6 @@ class IngredientValue(models.Model):
         Recipe,
         on_delete=models.CASCADE,
     )
-    value = models.IntegerField(
+    amount = models.IntegerField(
         validators=[MinValueValidator(1), ]
     )

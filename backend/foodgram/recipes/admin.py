@@ -9,7 +9,7 @@ class IngredientValueInline (admin.TabularInline):
 
 
 class IngredientValueAdmin(admin.ModelAdmin):
-    list_display = ("ingredient", "recipe", "value")
+    list_display = ("ingredient", "recipe", "amount")
     search_fields = ("ingredient",)
     empty_value_display = "-пусто-"
 
