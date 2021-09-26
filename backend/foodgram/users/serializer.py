@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from djoser.conf import settings
 
 
 User = get_user_model()
@@ -18,10 +19,8 @@ class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'email',
-            'id',
-            'username',
-            'first_name',
-            'last_name',
-            'is_subscribed',
+            (settings.LOGIN_FIELD, )
+            + tuple(User.REQUIRED_FIELDS)
+            + ('is_subscribed',)
         )
+        read_only_fields = (settings.LOGIN_FIELD,)

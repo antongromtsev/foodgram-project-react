@@ -8,15 +8,9 @@ class IngredientValueInline (admin.TabularInline):
     extra = 1
 
 
-class IngredientValueAdmin(admin.ModelAdmin):
-    list_display = ("ingredient", "recipe", "amount")
-    search_fields = ("ingredient",)
-    empty_value_display = "-пусто-"
-
-
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ("name", "measurement_unit")
-    search_fields = ("name",)
+    list_filter = ("name",)
     empty_value_display = "-пусто-"
 
 
@@ -28,19 +22,19 @@ class TagAdmin(admin.ModelAdmin):
 
 class RecipeAdmin(admin.ModelAdmin):
     list_display = (
-        "author",
         "name",
-        "image",
-        "text",
-        "get_ingredients",
-        "get_tags",
+        "author",
+        "added_to_favorites",
     )
-    search_fields = ("slug",)
+    list_filter = ("author", "name", "tags")
     empty_value_display = "-пусто-"
     inlines = (IngredientValueInline,)
+
+    def added_to_favorites(self, obj):
+        result = obj.fvorites.all().count()
+        return result
 
 
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Recipe, RecipeAdmin)
 admin.site.register(Ingredient, IngredientAdmin)
-admin.site.register(IngredientValue, IngredientValueAdmin)

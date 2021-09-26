@@ -6,7 +6,7 @@ from .profile import ProfileUser
 
 class MyUserAdmin(admin.ModelAdmin):
     list_display = ("email", "username", "role")
-    search_fields = ("username",)
+    list_filter = ("username", "email")
     empty_value_display = "-пусто-"
     fields = ("first_name", "last_name", "email", "username", "password", "role")
 

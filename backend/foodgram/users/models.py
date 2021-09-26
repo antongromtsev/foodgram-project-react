@@ -11,13 +11,13 @@ class RoleChoises(models.TextChoices):
 class MyUser(AbstractUser):
     first_name = models.CharField(
         max_length=150,
-        blank=True,
         verbose_name='First name',
+        blank=False,
     )
     last_name = models.CharField(
         max_length=150,
-        blank=True,
         verbose_name='Last name',
+        blank=False,
     )
     email = models.EmailField(
         max_length=254,
@@ -38,7 +38,7 @@ class MyUser(AbstractUser):
     )
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
 
     @property
