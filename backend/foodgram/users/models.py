@@ -3,11 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models.fields import CharField
 
 
-class RoleChoises(models.TextChoices):
-    ADMIN = 'admin'
-    USER = 'user'
-
-
 class MyUser(AbstractUser):
     first_name = models.CharField(
         max_length=150,
@@ -30,24 +25,8 @@ class MyUser(AbstractUser):
         verbose_name='Username',
     )
 
-    role = CharField(
-        max_length=50,
-        choices=RoleChoises.choices,
-        default=RoleChoises.USER,
-        verbose_name='User role',
-    )
-
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
-
-
-    @property
-    def is_admin(self):
-        return (
-            self.role == RoleChoises.ADMIN
-            or self.is_staff
-            or self.is_superuser
-        )
 
     def __str__(self):
         return '\n'.join([self.username])
