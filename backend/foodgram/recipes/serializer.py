@@ -92,34 +92,25 @@ class RecipeSerializer(serializers.ModelSerializer):
         )
 
 
-class IngredientWriteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Ingredient
-        fields = (
-            'id',
-            'name',
-            'measurement_unit',
-        )
-
-    def to_internal_value(self, data):
-        return super().to_internal_value(data)
 
 class IngredientValueWriteSerializer(serializers.ModelSerializer):
-    ingredient = IngredientWriteSerializer()
-
+    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    # amount = serializers.IntegerField(
+    #     min_value=1,
+    #     error_messages={
+    #         'min_value': 'Разрешено только целое положительное число!'
+    #     }
+    # )
     class Meta:
         model = IngredientValue
         fields = (
-            'ingredient',
+            'id',
             'amount',
         )
 
-    def to_internal_value(self, data):
-        data_new = {}
-        ingredient = get_object_or_404(Ingredient, pk=data['id'])
-        ingredient = IngredientSerializer(ingredient)
-        data_new['amount'] = data['amount']
-        return data_new
+    def create(self, validated_data):
+        self.context
+        return super().create(validated_data)
 
     def save(self, **kwargs):
         return super().save(**kwargs)
@@ -140,5 +131,33 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'cooking_time',
         )
 
+    def to_representation(self, instance):
+        serializer = RecipeSerializer(
+            instance,
+            context=self.context
+        )
+        return serializer.data
+
     def create(self, validated_data):
-        return super().create(validated_data)
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        obj_recipe = Recipe.objects.create( **validated_data)
+
+        recipe_ing = {}
+    
+        for item in ingredients:
+            name_ing = item['id'].name
+            if name_ing not in recipe_ing:
+                recipe_ing[name_ing] = IngredientValue.objects.create(
+                    ingredient=item['id'],
+                    recipe=obj_recipe,
+                    amount=item['amount']
+                )    
+                obj_recipe.ingredients.add(item['id'])
+            else:
+                recipe_ing[name_ing].amount += item['amount']
+                recipe_ing[name_ing].save()          
+        
+        obj_recipe.tags.set(tags)
+
+        return obj_recipe
