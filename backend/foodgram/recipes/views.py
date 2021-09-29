@@ -4,7 +4,7 @@ from rest_framework.pagination import PageNumberPagination
 from django_filters import rest_framework as filters
 
 from .models import Tag, Recipe, Ingredient
-from .serializer import TagSerializer, RecipeSerializer, IngredientSerializer
+from .serializer import TagSerializer, RecipeSerializer, RecipeWriteSerializer, IngredientSerializer
 from .filters import IngredientFilter
 
 
@@ -26,3 +26,11 @@ class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     pagination_class = PageNumberPagination
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return RecipeSerializer
+        return RecipeWriteSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)

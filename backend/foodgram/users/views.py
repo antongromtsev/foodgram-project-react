@@ -15,4 +15,3 @@ class MyUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = MyUserSerializer
     pagination_class = PageNumberPagination
-
