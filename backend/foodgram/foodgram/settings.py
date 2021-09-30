@@ -133,7 +133,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 6,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
@@ -147,7 +147,7 @@ DJOSER = {
     'LOGIN_FIELD': 'email',
     'HIDE_USERS' : False,
     'SERIALIZERS': {
-        'user' : 'users.serializer.MyUserSerializer',
+        'user' : 'users.serializer_user.MyUserSerializer',
         #'user_create' : 'users.serializer.MyUserSerializer',
         #'current_user': 'users.serializers.MyUserSerializer',
     },
