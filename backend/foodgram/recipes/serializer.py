@@ -1,8 +1,5 @@
-# from django.db import models
-# from django.db.models import fields
-from rest_framework import fields, serializers
+from rest_framework import serializers
 from drf_base64.fields import Base64ImageField
-from django.shortcuts import get_object_or_404
 
 from .models import Tag, Recipe, Ingredient, IngredientValue
 from users.serializer import MyUserSerializer

@@ -1,10 +1,7 @@
-from rest_framework import serializers
-from rest_framework import viewsets
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.pagination import PageNumberPagination
 from django_filters import rest_framework as filters
 from rest_framework import mixins, viewsets
-from django.contrib.auth.tokens import default_token_generator
 
 from .models import Tag, Recipe, Ingredient
 from .serializer import TagSerializer, RecipeSerializer, RecipeWriteSerializer, IngredientSerializer
