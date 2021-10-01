@@ -74,6 +74,9 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ('-pub_date',)
+
 
 class IngredientValue(models.Model):
     ingredient = models.ForeignKey(
