@@ -19,18 +19,17 @@ class MyUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = MyUserSerializer
     #permission_classes = [IsAuthenticatedOrReadOnly]
-    # pagination_class = PageNumberPagination
+    pagination_class = PageNumberPagination
 
     @action(["get"], detail=False, url_path="subscriptions")
     def subscriptions(self, request, *args, **kwargs):
         user = request.user
+        user_sub = user.profile.subscriptions.all()
         user_serializer = MyUserSerializer(user)
-        # user_serializer.is_valid
-        #user = user_serializer.data
-        #recipe = user.profile.subscriptions.all()
-        # recipe_serializer = RecipeSerializer(recipe, many=True)
+        page = self.paginate_queryset(user_sub)
         serializer = UserSubscriptionsSerializer(
-            user, context=self.get_serializer_context()
+            page, context=self.get_serializer_context(), many=True
         )
-        serializer.data
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        page_serializer = self.get_paginated_response(serializer.data)
+        x = page_serializer
+        return page_serializer
