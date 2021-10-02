@@ -86,6 +86,7 @@ class IngredientValue(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
+        #related_name='ingredient_value',
     )
     amount = models.IntegerField(
         validators=[MinValueValidator(1), ]

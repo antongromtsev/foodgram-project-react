@@ -14,8 +14,8 @@ class IngredientFilter(django_filters.FilterSet):
 class RecipeFilter(django_filters.FilterSet):
     author = django_filters.CharFilter(field_name='author__pk', lookup_expr='contains')
     tags = django_filters.CharFilter(field_name='tags__slug', lookup_expr='contains')
-    is_favorited = django_filters.CharFilter(method='filter')
-    is_in_shopping_cart = django_filters.CharFilter(method='filter')
+    is_favorited = django_filters.BooleanFilter(method='filter')
+    is_in_shopping_cart = django_filters.BooleanFilter(method='filter')
 
     class Meta:
         model = Recipe
@@ -23,7 +23,7 @@ class RecipeFilter(django_filters.FilterSet):
 
     def filter(self, queryset, name, value):
         user = self.request.user
-        if not user.is_authenticated or int(value) == 0:
+        if not user.is_authenticated or value == False:
             return queryset
         if name == 'is_favorited':
             return queryset.filter(fvorites__user=user)
