@@ -4,13 +4,18 @@ from django.contrib.auth import get_user_model
 from .profile import ProfileUser
 from .models import MyUser
 
+
 User = get_user_model()
+
 
 class MyUserAdmin(admin.ModelAdmin):
     list_display = ("email", "username", "is_active")
     list_filter = ("username", "email")
     empty_value_display = "-пусто-"
-    fields = ("first_name", "last_name", "email", "username", "password", "is_active")
+    fields = (
+        "first_name", "last_name", "email",
+        "username", "password", "is_active",
+    )
 
     def save_model(self, request, obj, form, change):
         orig_obj = User.objects.get(pk=obj.pk)

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+
 class IsSubscribedMixin(serializers.Serializer):
     is_subscribed = serializers.SerializerMethodField('get_is_subscribed')
 

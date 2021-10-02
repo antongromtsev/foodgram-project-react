@@ -1,3 +1,5 @@
+from django.http.response import HttpResponse
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from django_filters import rest_framework as filters
 from rest_framework import mixins, viewsets
@@ -5,21 +7,19 @@ from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
-from django.db.models import Avg
-from django.db.models import Sum
-from django.db.models import F
 
 from .models import Tag, Recipe, Ingredient
-from .serializer import TagSerializer, RecipeSerializer, RecipeWriteSerializer, IngredientSerializer
+from .serializer import (TagSerializer, RecipeSerializer,
+                         RecipeWriteSerializer, IngredientSerializer)
 from .filters import IngredientFilter, RecipeFilter
-from users.pagination import PaginationLimit
 from users.serializer import RecipeSubscriptionsSerializer
+from .pagination import PaginationLimit
+from .permissions import IsAuthorAdminOrReadOnly
 
-class MixinRetrieveList(
-    mixins.ListModelMixin,
-    mixins.RetrieveModelMixin,
-    viewsets.GenericViewSet
-):
+
+class MixinRetrieveList(mixins.ListModelMixin,
+                        mixins.RetrieveModelMixin,
+                        viewsets.GenericViewSet):
     pass
 
 
@@ -39,6 +39,7 @@ class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     pagination_class = PaginationLimit
+    permission_classes = [IsAuthorAdminOrReadOnly, ]
     filter_backends = (filters.DjangoFilterBackend, )
     filterset_class = RecipeFilter
 
@@ -50,7 +51,10 @@ class RecipeViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    @action(['get', 'delete'], detail=True, url_path='favorite')
+    @action(
+        ['get', 'delete'], detail=True,
+        url_path='favorite', permission_classes=[IsAuthenticated]
+    )
     def favorite(self, request, pk=None):
         user = request.user
         recipe_fav = get_object_or_404(Recipe, pk=int(pk))
@@ -63,7 +67,10 @@ class RecipeViewSet(ModelViewSet):
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(['get', 'delete'], detail=True, url_path='shopping_cart')
+    @action(
+        ['get', 'delete'], detail=True,
+        url_path='shopping_cart', permission_classes=[IsAuthenticated]
+    )
     def shopping_cart(self, request, pk=None):
         user = request.user
         recipe_shop = get_object_or_404(Recipe, pk=int(pk))
@@ -75,20 +82,36 @@ class RecipeViewSet(ModelViewSet):
             recipe_shop,
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
-    @action(['get'], detail=False, url_path='download_shopping_cart')
-    def download_shopping_cart(self, request):
-        user = request.user
-        user_cart = user.profile.shopping_list.all()
-        user_cart_ing = user_cart.values('ingredients__name', 'ingredients__measurement_unit', 'ingredientvalue__amount')
 
-#  Task.objects.aggregate(total=Sum(F('progress') * F('estimated_days')))['total']
-        shopping_cart={}
-        for ingredient in user_cart_ing:
+    @action(
+        ['get'], detail=False,
+        url_path='download_shopping_cart', permission_classes=[IsAuthenticated]
+    )
+    def download_shopping_cart(self, request):
+        cart_ingredients = request.user.profile.shopping_list.all().values(
+            'ingredients__name',
+            'ingredients__measurement_unit',
+            'ingredientvalue__amount'
+        )
+
+        shopping_cart = {}
+
+        for ingredient in cart_ingredients:
             keys = ingredient['ingredients__name']
             if keys not in shopping_cart.keys():
                 shopping_cart[keys] = ingredient
             else:
-                shopping_cart[keys]['ingredientvalue__amount'] += ingredient['ingredientvalue__amount']
-                
-        return Response(status=status.HTTP_201_CREATED)
+                value = ingredient['ingredientvalue__amount']
+                shopping_cart[keys]['ingredientvalue__amount'] += value
+
+        content = ([f'{item["ingredients__name"]}'
+                    f' ({item["ingredients__measurement_unit"]}) '
+                    f'- {item["ingredientvalue__amount"]}\n'
+                    for item in shopping_cart.values()])
+        response = HttpResponse(
+            content,
+            content_type='text/plain',
+            status=status.HTTP_201_CREATED
+        )
+
+        return response

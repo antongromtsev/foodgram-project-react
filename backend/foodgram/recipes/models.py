@@ -66,7 +66,9 @@ class Recipe(models.Model):
     )
 
     def get_ingredients(self):
-        return ', '.join([ingredient.name for ingredient in self.ingredients.all()])
+        return ', '.join(
+            [ingredient.name for ingredient in self.ingredients.all()]
+        )
 
     def get_tags(self):
         return ', '.join([tags.name for tags in self.tags.all()])
@@ -86,7 +88,6 @@ class IngredientValue(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        #related_name='ingredient_value',
     )
     amount = models.IntegerField(
         validators=[MinValueValidator(1), ]

@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -129,8 +128,6 @@ STATIC_URL = '/static/'
 AUTH_USER_MODEL = 'users.MyUser'
 
 REST_FRAMEWORK = {
-    #'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 6,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -138,17 +135,10 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
-# SIMPLE_JWT = {
-#    'AUTH_HEADER_TYPES': ('JWT',),
-#    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-# }
-
 DJOSER = {
     'LOGIN_FIELD': 'email',
-    'HIDE_USERS' : False,
+    'HIDE_USERS': False,
     'SERIALIZERS': {
-        'user' : 'users.serializer_user.MyUserSerializer',
-        #'user_create' : 'users.serializer.MyUserSerializer',
-        #'current_user': 'users.serializers.MyUserSerializer',
+        'user': 'users.serializer_user.MyUserSerializer',
     },
 }

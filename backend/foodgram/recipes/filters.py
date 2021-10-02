@@ -12,8 +12,14 @@ class IngredientFilter(django_filters.FilterSet):
 
 
 class RecipeFilter(django_filters.FilterSet):
-    author = django_filters.CharFilter(field_name='author__pk', lookup_expr='contains')
-    tags = django_filters.CharFilter(field_name='tags__slug', lookup_expr='contains')
+    author = django_filters.CharFilter(
+        field_name='author__pk',
+        lookup_expr='contains',
+    )
+    tags = django_filters.CharFilter(
+        field_name='tags__slug',
+        lookup_expr='contains',
+    )
     is_favorited = django_filters.BooleanFilter(method='filter')
     is_in_shopping_cart = django_filters.BooleanFilter(method='filter')
 
@@ -23,7 +29,7 @@ class RecipeFilter(django_filters.FilterSet):
 
     def filter(self, queryset, name, value):
         user = self.request.user
-        if not user.is_authenticated or value == False:
+        if not user.is_authenticated or value is False:
             return queryset
         if name == 'is_favorited':
             return queryset.filter(fvorites__user=user)

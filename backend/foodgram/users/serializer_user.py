@@ -4,11 +4,12 @@ from djoser.conf import settings
 
 from .serializer_is_subscribed import IsSubscribedMixin
 
+
 User = get_user_model()
 
 
 class MyUserSerializer(serializers.ModelSerializer, IsSubscribedMixin):
-    
+
     class Meta:
         model = User
         fields = (
@@ -18,7 +19,3 @@ class MyUserSerializer(serializers.ModelSerializer, IsSubscribedMixin):
             + ('is_subscribed',)
         )
         read_only_fields = (settings.LOGIN_FIELD,)
-
-
-
-

@@ -29,4 +29,3 @@ class ProfileUser(models.Model):
         related_name='shopping',
         blank=True,
     )
-

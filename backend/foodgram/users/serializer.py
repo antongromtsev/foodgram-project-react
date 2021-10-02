@@ -1,13 +1,7 @@
-from django.db import models
-from django.db.models import fields
-from django.db.models.base import Model
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from djoser.conf import settings
 
-from recipes.serializer import RecipeSerializer
 from recipes.models import Recipe
-from users.serializer_user import MyUserSerializer
 from .serializer_is_subscribed import IsSubscribedMixin
 
 

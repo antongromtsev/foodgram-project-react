@@ -89,15 +89,9 @@ class RecipeSerializer(serializers.ModelSerializer):
         )
 
 
-
 class IngredientValueWriteSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
-    # amount = serializers.IntegerField(
-    #     min_value=1,
-    #     error_messages={
-    #         'min_value': 'Разрешено только целое положительное число!'
-    #     }
-    # )
+
     class Meta:
         model = IngredientValue
         fields = (
@@ -138,10 +132,10 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
-        obj_recipe = Recipe.objects.create( **validated_data)
+        obj_recipe = Recipe.objects.create(**validated_data)
 
         recipe_ing = {}
-    
+
         for item in ingredients:
             name_ing = item['id'].name
             if name_ing not in recipe_ing:
@@ -149,12 +143,33 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                     ingredient=item['id'],
                     recipe=obj_recipe,
                     amount=item['amount']
-                )    
+                )
                 obj_recipe.ingredients.add(item['id'])
             else:
                 recipe_ing[name_ing].amount += item['amount']
-                recipe_ing[name_ing].save()          
-        
+                recipe_ing[name_ing].save()
+
         obj_recipe.tags.set(tags)
 
         return obj_recipe
+
+    def update(self, instance, validated_data):
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        IngredientValue.objects.filter(recipe=instance).delete()
+        recipe_ing = {}
+        for item in ingredients:
+            name_ing = item['id'].name
+            if name_ing not in recipe_ing:
+                recipe_ing[name_ing] = IngredientValue.objects.create(
+                    ingredient=item['id'],
+                    recipe=instance,
+                    amount=item['amount']
+                )
+                instance.ingredients.add(item['id'])
+            else:
+                recipe_ing[name_ing].amount += item['amount']
+                recipe_ing[name_ing].save()
+        instance.save()
+        instance.tags.set(tags)
+        return instance
