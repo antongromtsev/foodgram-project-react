@@ -1,9 +1,9 @@
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from rest_framework import serializers
 
 from recipes.models import Recipe
-from .serializer_is_subscribed import IsSubscribedMixin
 
+from .serializer_is_subscribed import IsSubscribedMixin
 
 User = get_user_model()
 

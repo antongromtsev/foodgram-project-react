@@ -1,9 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 
-from .profile import ProfileUser
 from .models import MyUser
-
+from .profile import ProfileUser
 
 User = get_user_model()
 
