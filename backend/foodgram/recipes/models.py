@@ -8,6 +8,7 @@ User = get_user_model()
 class Tag(models.Model):
     name = models.CharField(
         max_length=200,
+        unique=True,
     )
     color = models.CharField(
         max_length=7,
@@ -44,7 +45,7 @@ class Recipe(models.Model):
         max_length=250,
     )
     image = models.ImageField(
-        upload_to='image/',
+        # upload_to='image/',
     )
     text = models.TextField()
     ingredients = models.ManyToManyField(

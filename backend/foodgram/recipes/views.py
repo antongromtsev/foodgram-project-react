@@ -53,7 +53,7 @@ class RecipeViewSet(ModelViewSet):
 
     @action(
         ['get', 'delete'], detail=True,
-        url_path='favorite', permission_classes=[IsAuthenticated]
+        url_path='favorite', permission_classes=[IsAuthorAdminOrReadOnly]
     )
     def favorite(self, request, pk=None):
         user = request.user

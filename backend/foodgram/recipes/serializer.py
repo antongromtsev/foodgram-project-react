@@ -46,7 +46,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-
+    image = Base64ImageField(use_url=True)
     tags = TagSerializer(many=True)
     author = MyUserSerializer()
     ingredients = IngredientValueSerializer(
@@ -109,7 +109,7 @@ class IngredientValueWriteSerializer(serializers.ModelSerializer):
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
-    image = Base64ImageField()
+    image = Base64ImageField(use_url=True)
     ingredients = IngredientValueWriteSerializer(many=True)
 
     class Meta:
