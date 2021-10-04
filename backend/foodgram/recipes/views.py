@@ -6,8 +6,9 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from collections import defaultdict
 
-from users.serializer import RecipeSubscriptionsSerializer
+from recipes.serializer import RecipeSubscriptionsSerializer
 
 from .filters import IngredientFilter, RecipeFilter
 from .models import Ingredient, Recipe, Tag
@@ -94,15 +95,17 @@ class RecipeViewSet(ModelViewSet):
             'ingredientvalue__amount'
         )
 
-        shopping_cart = {}
+        shopping_cart = defaultdict({})
 
-        for ingredient in cart_ingredients:
-            keys = ingredient['ingredients__name']
-            if keys not in shopping_cart.keys():
-                shopping_cart[keys] = ingredient
-            else:
-                value = ingredient['ingredientvalue__amount']
-                shopping_cart[keys]['ingredientvalue__amount'] += value
+        for k, v in cart_ingredients:
+            shopping_cart[k] += v
+
+            # keys = ingredient['ingredients__name']
+            # if keys not in shopping_cart.keys():
+            #     shopping_cart[keys] = ingredient
+            # else:
+            #     value = ingredient['ingredientvalue__amount']
+            #     shopping_cart[keys]['ingredientvalue__amount'] += value
 
         content = ([f'{item["ingredients__name"]}'
                     f' ({item["ingredients__measurement_unit"]}) '

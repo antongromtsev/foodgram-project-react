@@ -6,12 +6,10 @@ class MyUser(AbstractUser):
     first_name = models.CharField(
         max_length=150,
         verbose_name='First name',
-        blank=False,
     )
     last_name = models.CharField(
         max_length=150,
         verbose_name='Last name',
-        blank=False,
     )
     email = models.EmailField(
         max_length=254,
@@ -28,4 +26,4 @@ class MyUser(AbstractUser):
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     def __str__(self):
-        return '\n'.join([self.username])
+        return self.username

@@ -8,8 +8,9 @@ from rest_framework.response import Response
 
 from recipes.pagination import PaginationLimit
 
-from .serializer import UserSubscriptionsSerializer
-from .serializer_user import MyUserSerializer
+from recipes.serializer import UserSubscriptionsSerializer
+from .serializer import MyUserSerializer
+
 
 User = get_user_model()
 
@@ -27,8 +28,7 @@ class MyUserViewSet(UserViewSet):
         serializer = UserSubscriptionsSerializer(
             page, context=self.get_serializer_context(), many=True
         )
-        page_serializer = self.get_paginated_response(serializer.data)
-        return page_serializer
+        return self.get_paginated_response(serializer.data)
 
     @action(['get', 'delete'], detail=True, url_path='subscribe')
     def subscribe(self, request, id=None):

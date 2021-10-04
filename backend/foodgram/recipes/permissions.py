@@ -5,7 +5,7 @@ class IsAuthorAdminOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
-        if request.method in 'DELETE':
+        if request.method == 'DELETE':
             return (
                 request.user.is_authenticated
                 and (

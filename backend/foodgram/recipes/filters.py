@@ -29,9 +29,9 @@ class RecipeFilter(django_filters.FilterSet):
 
     def filter(self, queryset, name, value):
         user = self.request.user
-        if not user.is_authenticated or value is False:
+        if not user.is_authenticated or not value:
             return queryset
         if name == 'is_favorited':
             return queryset.filter(fvorites__user=user)
-        if name == 'is_in_shopping_cart':
+        elif name == 'is_in_shopping_cart':
             return queryset.filter(shopping__user=user)

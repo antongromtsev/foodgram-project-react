@@ -63,6 +63,12 @@ class Recipe(models.Model):
         verbose_name='Publication date',
     )
 
+    class Meta:
+        ordering = ('-pub_date',)
+
+    def __str__(self):
+        return self.name
+
     def get_ingredients(self):
         return ', '.join(
             [ingredient.name for ingredient in self.ingredients.all()]
@@ -70,12 +76,6 @@ class Recipe(models.Model):
 
     def get_tags(self):
         return ', '.join([tags.name for tags in self.tags.all()])
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        ordering = ('-pub_date',)
 
 
 class IngredientValue(models.Model):
