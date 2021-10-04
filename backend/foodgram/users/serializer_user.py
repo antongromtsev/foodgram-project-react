@@ -1,6 +1,6 @@
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from djoser.conf import settings
+from rest_framework import serializers
 
 from .serializer_is_subscribed import IsSubscribedMixin
 
@@ -8,7 +8,7 @@ User = get_user_model()
 
 
 class MyUserSerializer(serializers.ModelSerializer, IsSubscribedMixin):
-    
+
     class Meta:
         model = User
         fields = (

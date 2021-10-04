@@ -1,8 +1,42 @@
-from rest_framework import serializers
-from drf_base64.fields import Base64ImageField
+# from drf_base64.fields import Base64ImageField
+import base64
+import imghdr
+import uuid
 
-from .models import Tag, Recipe, Ingredient, IngredientValue
+import six
+from django.conf import settings
+from rest_framework import serializers
+from django.core.files.base import ContentFile
+
 from users.serializer_user import MyUserSerializer
+
+from .models import Ingredient, IngredientValue, Recipe, Tag
+
+
+class Base64ImageField(serializers.ImageField):
+    def to_internal_value(self, data):
+        if isinstance(data, six.string_types):
+            if 'data:' in data and ';base64,' in data:
+                header, data = data.split(';base64,')
+            try:
+                decoded_file = base64.b64decode(data)
+            except TypeError:
+                self.fail('invalid_image')
+            file_name = str(uuid.uuid4())[:12]
+            file_extension = self.get_file_extension(file_name, decoded_file)
+            complete_file_name = '%s.%s' % (file_name, file_extension,)
+            data = ContentFile(decoded_file, name=complete_file_name)
+
+        return super(Base64ImageField, self).to_internal_value(data)
+
+    def get_file_extension(self, file_name, decoded_file):
+        extension = imghdr.what(file_name, decoded_file)
+        extension = 'jpg' if extension == 'jpeg' else extension
+
+        return extension
+
+    def to_representation(self, value):
+        return super().to_representation(value) #settings.MEDIA_URL + 
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -45,7 +79,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-
+    image = Base64ImageField()
     tags = TagSerializer(many=True)
     author = MyUserSerializer()
     ingredients = IngredientValueSerializer(
@@ -89,15 +123,9 @@ class RecipeSerializer(serializers.ModelSerializer):
         )
 
 
-
 class IngredientValueWriteSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
-    # amount = serializers.IntegerField(
-    #     min_value=1,
-    #     error_messages={
-    #         'min_value': 'Разрешено только целое положительное число!'
-    #     }
-    # )
+
     class Meta:
         model = IngredientValue
         fields = (
@@ -114,7 +142,7 @@ class IngredientValueWriteSerializer(serializers.ModelSerializer):
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
-    image = Base64ImageField(required=False)
+    image = Base64ImageField()
     ingredients = IngredientValueWriteSerializer(many=True)
 
     class Meta:
@@ -138,10 +166,10 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
-        obj_recipe = Recipe.objects.create( **validated_data)
+        obj_recipe = Recipe.objects.create(**validated_data)
 
         recipe_ing = {}
-    
+
         for item in ingredients:
             name_ing = item['id'].name
             if name_ing not in recipe_ing:
@@ -149,12 +177,33 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                     ingredient=item['id'],
                     recipe=obj_recipe,
                     amount=item['amount']
-                )    
+                )
                 obj_recipe.ingredients.add(item['id'])
             else:
                 recipe_ing[name_ing].amount += item['amount']
-                recipe_ing[name_ing].save()          
-        
+                recipe_ing[name_ing].save()
+
         obj_recipe.tags.set(tags)
 
         return obj_recipe
+
+    def update(self, instance, validated_data):
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        IngredientValue.objects.filter(recipe=instance).delete()
+        recipe_ing = {}
+        for item in ingredients:
+            name_ing = item['id'].name
+            if name_ing not in recipe_ing:
+                recipe_ing[name_ing] = IngredientValue.objects.create(
+                    ingredient=item['id'],
+                    recipe=instance,
+                    amount=item['amount']
+                )
+                instance.ingredients.add(item['id'])
+            else:
+                recipe_ing[name_ing].amount += item['amount']
+                recipe_ing[name_ing].save()
+        instance.save()
+        instance.tags.set(tags)
+        return instance

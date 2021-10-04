@@ -1,7 +1,6 @@
-from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
-
+from django.db import models
 
 User = get_user_model()
 
@@ -9,6 +8,7 @@ User = get_user_model()
 class Tag(models.Model):
     name = models.CharField(
         max_length=200,
+        unique=True,
     )
     color = models.CharField(
         max_length=7,
@@ -44,9 +44,7 @@ class Recipe(models.Model):
     name = models.CharField(
         max_length=250,
     )
-    image = models.ImageField(
-        upload_to='image/',
-    )
+    image = models.ImageField(upload_to='recipes')
     text = models.TextField()
     ingredients = models.ManyToManyField(
         Ingredient,
@@ -66,13 +64,18 @@ class Recipe(models.Model):
     )
 
     def get_ingredients(self):
-        return ', '.join([ingredient.name for ingredient in self.ingredients.all()])
+        return ', '.join(
+            [ingredient.name for ingredient in self.ingredients.all()]
+        )
 
     def get_tags(self):
         return ', '.join([tags.name for tags in self.tags.all()])
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ('-pub_date',)
 
 
 class IngredientValue(models.Model):
