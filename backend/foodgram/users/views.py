@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from recipes.pagination import PaginationLimit
 
 from recipes.serializer import UserSubscriptionsSerializer
+from users.profile import Subscription
 from .serializer import MyUserSerializer
 
 
@@ -23,7 +24,7 @@ class MyUserViewSet(UserViewSet):
 
     @action(['get'], detail=False, url_path='subscriptions')
     def subscriptions(self, request):
-        user_sub = request.user.profile.subscriptions.all()
+        user_sub = User.objects.filter(followed__follower=request.user)
         page = self.paginate_queryset(user_sub)
         serializer = UserSubscriptionsSerializer(
             page, context=self.get_serializer_context(), many=True
@@ -40,9 +41,9 @@ class MyUserViewSet(UserViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         if request.method == 'DELETE':
-            user.profile.subscriptions.remove(user_sub.pk)
+            Subscription.objects.filter(follower = user.pk, followed = id).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        user.profile.subscriptions.add(user_sub.pk)
+        Subscription.objects.get_or_create(follower = user, followed = user_sub)
         serializer = UserSubscriptionsSerializer(
             user_sub, context=self.get_serializer_context(),
         )

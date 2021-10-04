@@ -55,7 +55,7 @@ class IngredientValueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IngredientValue
-        fields = ('ingredient')
+        fields = ('ingredient', )
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -80,7 +80,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         source='ingredientvalue_set',
         many=True,
     )
-    is_favorited = serializers.SerializerMethodField('get_is_favorited')
+    is_favorited = serializers.SerializerMethodField('get_is_favorited', )
     is_in_shopping_cart = serializers.SerializerMethodField(
         'get_is_in_shopping_cart',
     )
@@ -89,14 +89,14 @@ class RecipeSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         return (
             user.is_authenticated and
-            user.profile.favourites.filter(pk=obj.pk).exists()
+            user.favorites.filter(pk=obj.pk).exists()
         )
 
     def get_is_in_shopping_cart(self, obj):
         user = self.context['request'].user
         return (
             user.is_authenticated and
-            user.profile.shopping_list.all().filter(pk=obj.pk).exists()
+            user.shopping_cart.filter(pk=obj.pk).exists()
         )
 
     class Meta:
@@ -113,7 +113,7 @@ class IngredientValueWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IngredientValue
-        fields = ('id', 'amount')
+        fields = ('id', 'amount', )
 
     def create(self, validated_data):
         self.context
@@ -137,7 +137,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         serializer = RecipeSerializer(
             instance,
-            context=self.context
+            context=self.context,
         )
         return serializer.data
 
@@ -201,7 +201,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 class RecipeSubscriptionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
-        fields = ('id', 'name', 'image', 'cooking_time')
+        fields = ('id', 'name', 'image', 'cooking_time', )
 
 
 class UserSubscriptionsSerializer(serializers.ModelSerializer,
@@ -220,12 +220,12 @@ class UserSubscriptionsSerializer(serializers.ModelSerializer,
         )
 
     def get_recipes(self, obj):
-        recipes_limit = self.context.get('request').get('recipes_limit')
+        recipes_limit = self.context['request'].GET.get('recipes_limit')
         if recipes_limit is None:
             return
         recipes_limit = int(recipes_limit)
         serializers = RecipeSubscriptionsSerializer(
-            obj.recipe[:recipes_limit],
+            obj.recipe.order_by('-pub_date')[:recipes_limit],
             many=True,
         )
         return serializers.data

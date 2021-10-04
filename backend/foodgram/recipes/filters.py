@@ -32,6 +32,8 @@ class RecipeFilter(django_filters.FilterSet):
         if not user.is_authenticated or not value:
             return queryset
         if name == 'is_favorited':
-            return queryset.filter(fvorites__user=user)
+            x = queryset.filter(favorites__user=user)
+            return queryset.filter(favorites__user=user)
         elif name == 'is_in_shopping_cart':
-            return queryset.filter(shopping__user=user)
+            x = queryset.filter(shopping_cart__user=user)
+            return queryset.filter(shopping_cart__user=user)

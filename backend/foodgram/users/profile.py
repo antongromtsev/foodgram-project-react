@@ -32,9 +32,19 @@ User = get_user_model()
 
 class Subscription(models.Model):
     follower = models.ForeignKey(User, on_delete=models.CASCADE,
-                                 related_name='user_following')
+                                 related_name='following')
     followed = models.ForeignKey(User, on_delete=models.CASCADE,
-                                 related_name='user_followed')
+                                 related_name='followed')
+    
+    class Meta:
+        verbose_name = 'Following user'
+        verbose_name_plural = 'Following users'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['follower', 'followed'],
+                name='unique_following'
+            )
+        ]
 
 
 class Favourites(models.Model):

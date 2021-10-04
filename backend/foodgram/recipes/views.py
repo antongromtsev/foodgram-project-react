@@ -10,6 +10,7 @@ from collections import defaultdict
 
 from recipes.serializer import RecipeSubscriptionsSerializer
 
+from users.profile import Shopping_cart, Favourites
 from .filters import IngredientFilter, RecipeFilter
 from .models import Ingredient, Recipe, Tag
 from .pagination import PaginationLimit
@@ -76,9 +77,9 @@ class RecipeViewSet(ModelViewSet):
         user = request.user
         recipe_shop = get_object_or_404(Recipe, pk=int(pk))
         if request.method == 'DELETE':
-            user.profile.shopping_list.remove(recipe_shop.pk)
+            Shopping_cart.objects.filter(user=user, recipe=recipe_shop).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        user.profile.shopping_list.add(recipe_shop)
+        Shopping_cart.objects.get_or_create(user=user, recipe=recipe_shop)
         serializer = RecipeSubscriptionsSerializer(
             recipe_shop,
         )
@@ -89,17 +90,26 @@ class RecipeViewSet(ModelViewSet):
         url_path='download_shopping_cart', permission_classes=[IsAuthenticated]
     )
     def download_shopping_cart(self, request):
-        cart_ingredients = request.user.profile.shopping_list.all().values(
+        cart_ingredients = Recipe.objects.filter(shopping_cart__user=request.user).all().values(
             'ingredients__name',
             'ingredients__measurement_unit',
             'ingredientvalue__amount'
         )
 
-        shopping_cart = defaultdict({})
+        dick = {
+            'name': '',
+            'unit': '',
+            'amount': 0,
+        }
 
-        for k, v in cart_ingredients:
-            shopping_cart[k] += v
+        shopping_cart = defaultdict(dick)
 
+        for ing in cart_ingredients:
+            #key = ing['ingredients__name'] + f' ({ing["ingredients__measurement_unit"]}) -'
+            shopping_cart = shopping_cart[ing['ingredients__name']]
+            shopping_cart['name'] = ing['ingredients__name']
+            shopping_cart['unit'] = ing['ingredients__measurement_unit']
+            shopping_cart['amount'] += ing['ingredientvalue__amount']
             # keys = ingredient['ingredients__name']
             # if keys not in shopping_cart.keys():
             #     shopping_cart[keys] = ingredient
@@ -107,10 +117,12 @@ class RecipeViewSet(ModelViewSet):
             #     value = ingredient['ingredientvalue__amount']
             #     shopping_cart[keys]['ingredientvalue__amount'] += value
 
-        content = ([f'{item["ingredients__name"]}'
-                    f' ({item["ingredients__measurement_unit"]}) '
-                    f'- {item["ingredientvalue__amount"]}\n'
-                    for item in shopping_cart.values()])
+        # content = ([f'{item["ingredients__name"]}'
+        #             f' ({item["ingredients__measurement_unit"]}) '
+        #             f'- {item["ingredientvalue__amount"]}\n'
+        #             for item in shopping_cart.values()])
+        x = shopping_cart.keys()
+        content = ([item + f'{x}' for item in shopping_cart])
         response = HttpResponse(
             content,
             content_type='text/plain',
