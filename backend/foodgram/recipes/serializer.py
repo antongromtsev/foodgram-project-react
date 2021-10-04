@@ -4,7 +4,6 @@ import imghdr
 import uuid
 
 import six
-from django.conf import settings
 from rest_framework import serializers
 from django.core.files.base import ContentFile
 
@@ -34,9 +33,6 @@ class Base64ImageField(serializers.ImageField):
         extension = 'jpg' if extension == 'jpeg' else extension
 
         return extension
-
-    def to_representation(self, value):
-        return super().to_representation(value) #settings.MEDIA_URL + 
 
 
 class IngredientSerializer(serializers.ModelSerializer):
