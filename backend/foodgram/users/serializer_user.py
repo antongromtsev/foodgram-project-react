@@ -13,11 +13,8 @@ class MyUserSerializer(serializers.ModelSerializer, IsSubscribedMixin):
         model = User
         fields = (
             (settings.LOGIN_FIELD, )
+            + ('id', )
             + tuple(User.REQUIRED_FIELDS)
             + ('is_subscribed',)
         )
         read_only_fields = (settings.LOGIN_FIELD,)
-
-
-
-
