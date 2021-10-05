@@ -146,20 +146,22 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         tags = validated_data.pop('tags')
         obj_recipe = Recipe.objects.create(**validated_data)
 
-        recipe_ing = {}
+        igredient_add_recipe(ingredients, obj_recipe)
+       
+        # recipe_ing = {}
 
-        for item in ingredients:
-            name_ing = item['id'].name
-            if name_ing not in recipe_ing:
-                recipe_ing[name_ing] = IngredientValue.objects.create(
-                    ingredient=item['id'],
-                    recipe=obj_recipe,
-                    amount=item['amount']
-                )
-                obj_recipe.ingredients.add(item['id'])
-            else:
-                recipe_ing[name_ing].amount += item['amount']
-                recipe_ing[name_ing].save()
+        # for item in ingredients:
+        #     name_ing = item['id'].name
+        #     if name_ing not in recipe_ing:
+        #         recipe_ing[name_ing] = IngredientValue.objects.create(
+        #             ingredient=item['id'],
+        #             recipe=obj_recipe,
+        #             amount=item['amount']
+        #         )
+        #         obj_recipe.ingredients.add(item['id'])
+        #     else:
+        #         recipe_ing[name_ing].amount += item['amount']
+        #         recipe_ing[name_ing].save()
 
         obj_recipe.tags.set(tags)
 
@@ -169,24 +171,30 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         IngredientValue.objects.filter(recipe=instance).delete()
-        recipe_ing = {}
-        for item in ingredients:
-            name_ing = item['id'].name
-            if name_ing not in recipe_ing:
-                recipe_ing[name_ing] = IngredientValue.objects.create(
-                    ingredient=item['id'],
-                    recipe=instance,
-                    amount=item['amount']
-                )
-                instance.ingredients.add(item['id'])
-            else:
-                recipe_ing[name_ing].amount += item['amount']
-                recipe_ing[name_ing].save()
+
+        igredient_add_recipe(ingredients, instance)
+        
+        # recipe_ing = {}
+        # for item in ingredients:
+        #     name_ing = item['id'].name
+        #     if name_ing not in recipe_ing:
+        #         recipe_ing[name_ing] = IngredientValue.objects.create(
+        #             ingredient=item['id'],
+        #             recipe=instance,
+        #             amount=item['amount']
+        #         )
+        #         instance.ingredients.add(item['id'])
+        #     else:
+        #         recipe_ing[name_ing].amount += item['amount']
+        #         recipe_ing[name_ing].save()
+        for (key, value) in validated_data.items():
+            setattr(instance, key, value)
         instance.save()
         instance.tags.set(tags)
         return instance
 
 
+    
 # class IsSubscribedMixin(serializers.Serializer):
 #     is_subscribed = serializers.SerializerMethodField('get_is_subscribed')
 
@@ -232,3 +240,20 @@ class UserSubscriptionsSerializer(serializers.ModelSerializer,
 
     def get_recipes_count(self, obj):
         return obj.recipe.count()
+
+def igredient_add_recipe(ingredients, obj):
+        recipe_ing = {}
+
+        for item in ingredients:
+            name_ing = item['id'].name
+            if name_ing not in recipe_ing:
+                recipe_ing[name_ing] = IngredientValue.objects.create(
+                    ingredient=item['id'],
+                    recipe=obj,
+                    amount=item['amount']
+                )
+                obj.ingredients.add(item['id'])
+            else:
+                recipe_ing[name_ing].amount += item['amount']
+                recipe_ing[name_ing].save()
+        return obj
