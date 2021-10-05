@@ -7,11 +7,10 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from recipes.pagination import PaginationLimit
-
 from recipes.serializer import UserSubscriptionsSerializer
 from users.profile import Subscription
-from .serializer import MyUserSerializer
 
+from .serializer import MyUserSerializer
 
 User = get_user_model()
 
@@ -41,9 +40,9 @@ class MyUserViewSet(UserViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         if request.method == 'DELETE':
-            Subscription.objects.filter(follower = user.pk, followed = id).delete()
+            Subscription.objects.filter(follower=user.pk, followed=id).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        Subscription.objects.get_or_create(follower = user, followed = user_sub)
+        Subscription.objects.get_or_create(follower=user, followed=user_sub)
         serializer = UserSubscriptionsSerializer(
             user_sub, context=self.get_serializer_context(),
         )

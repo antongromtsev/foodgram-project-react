@@ -8,10 +8,6 @@ from .profile import Favourites, Shopping_cart, Subscription
 User = get_user_model()
 
 
-# class SubscriptionInline (admin.TabularInline):
-#     model = Subscription
-#     extra = 1
-
 class MyUserAdmin(admin.ModelAdmin):
     list_display = ('email', 'username', 'is_active')
     list_filter = ('username', 'email')
@@ -27,18 +23,6 @@ class MyUserAdmin(admin.ModelAdmin):
             obj.set_password(obj.password)
         obj.save()
 
-
-# # class FavouritesAdmin(admin.ModelAdmin):
-# #     #list_display = ('user__usermane', 'recipe__name')
-# #     inlines = (IngredientValueInline,)
-
-# # class Shopping_cartAdmin(admin.ModelAdmin):
-# #     #list_display = ('follower__username', 'followed__username')
-# #     inlines = (IngredientValueInline,)
-
-# class SubscriptionAdmin(admin.ModelAdmin):
-#     #list_display = ('user__username', 'recipe__name')
-#     inlines = (SubscriptionInline,)
 
 admin.site.register(MyUser, MyUserAdmin)
 admin.site.register(Favourites,)

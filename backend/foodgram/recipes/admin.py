@@ -31,7 +31,7 @@ class RecipeAdmin(admin.ModelAdmin):
     inlines = (IngredientValueInline,)
 
     def added_to_favorites(self, obj):
-        result = obj.fvorites.all().count()
+        result = obj.favorites.count()
         return result
 
 
