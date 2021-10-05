@@ -117,7 +117,7 @@ class RecipeViewSet(ModelViewSet):
             value['unit'] = ing['ingredients__measurement_unit']
             value['amount'] += ing['ingredientvalue__amount']
             shopping_cart[keys] = value
-        
+
         content = (
             [f'{item["name"]} ({item["unit"]}) - '
              f'{item["amount"]}\n' for item in shopping_cart.values()]

@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from .mixin import IsSubscribedMixin
 
+
 User = get_user_model()
 
 
