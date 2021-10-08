@@ -89,7 +89,7 @@ jobs:
           sudo docker pull ${{ secrets.DOCKER_USER }}/foodgram-backend
           sudo docker pull ${{ secrets.DOCKER_USER }}/foodgram-frontend 
           sudo docker-compose stop
-          sudo docker-compose rm web
+          sudo docker-compose rm backend
           # Создаст файл для переменных окружения
           touch .env
           echo -n > ./.env
