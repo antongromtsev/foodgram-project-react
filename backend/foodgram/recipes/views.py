@@ -1,6 +1,3 @@
-import copy
-from collections import defaultdict
-
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as filters
@@ -9,12 +6,13 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from django.db.models import Sum
 
 from recipes.serializer import RecipeSubscriptionsSerializer
-from users.profile import Favourites, Shopping_cart
+from users.models import Favourites, Shopping_cart
 
 from .filters import IngredientFilter, RecipeFilter
-from .models import Ingredient, Recipe, Tag
+from .models import Ingredient, IngredientValue, Recipe, Tag
 from .pagination import PaginationLimit
 from .permissions import IsAuthorAdminOrReadOnly
 from .serializer import (IngredientSerializer, RecipeSerializer,
@@ -93,34 +91,20 @@ class RecipeViewSet(ModelViewSet):
         url_path='download_shopping_cart', permission_classes=[IsAuthenticated]
     )
     def download_shopping_cart(self, request):
+
         cart_ingredients = (
-            Recipe.objects.filter(shopping_cart__user=request.user)
-            .all().values(
-                'ingredients__name',
-                'ingredients__measurement_unit',
-                'ingredientvalue__amount'
-            )
+            IngredientValue.objects.filter(
+                recipe__shopping_cart__user=request.user
+            ).values(
+                'ingredient__name',
+                'ingredient__measurement_unit',
+            ).annotate(Sum('amount'))
         )
 
-        default = {
-            'name': '',
-            'unit': '',
-            'amount': 0,
-        }
-
-        shopping_cart = defaultdict(lambda: default)
-
-        for ing in cart_ingredients:
-            keys = ing['ingredients__name']
-            value = copy.deepcopy(shopping_cart[keys])
-            value['name'] = ing['ingredients__name']
-            value['unit'] = ing['ingredients__measurement_unit']
-            value['amount'] += ing['ingredientvalue__amount']
-            shopping_cart[keys] = value
-
         content = (
-            [f'{item["name"]} ({item["unit"]}) - '
-             f'{item["amount"]}\n' for item in shopping_cart.values()]
+            [f'{item["ingredient__name"]} '
+             f'({item["ingredient__measurement_unit"]}) - '
+             f'{item["amount__sum"]}\n' for item in cart_ingredients]
         )
 
         response = HttpResponse(

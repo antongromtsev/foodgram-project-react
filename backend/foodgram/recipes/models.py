@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
+
 User = get_user_model()
 
 
@@ -18,6 +19,10 @@ class Tag(models.Model):
         unique=True,
     )
 
+    class Meta:
+        verbose_name = 'Tag'
+        verbose_name_plural = 'Tags'
+
     def __str__(self):
         return self.name
 
@@ -30,6 +35,10 @@ class Ingredient(models.Model):
         max_length=50,
         default='г'
     )
+
+    class Meta:
+        verbose_name = 'Ingredient'
+        verbose_name_plural = 'Ingredients'
 
     def __str__(self):
         return self.name
@@ -64,6 +73,8 @@ class Recipe(models.Model):
     )
 
     class Meta:
+        verbose_name = 'Recipe'
+        verbose_name_plural = 'Recipes'
         ordering = ('-pub_date',)
 
     def __str__(self):
@@ -90,3 +101,6 @@ class IngredientValue(models.Model):
     amount = models.IntegerField(
         validators=[MinValueValidator(1), ]
     )
+
+    class Meta:
+        verbose_name = 'Ingredient amount'

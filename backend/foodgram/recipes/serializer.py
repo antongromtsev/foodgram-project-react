@@ -1,42 +1,17 @@
-import base64
-import imghdr
-import uuid
-import six
+from drf_extra_fields.fields import Base64ImageField
 
 from django.contrib.auth import get_user_model
-from django.core.files.base import ContentFile
 from rest_framework import serializers
 
-from users.mixin import IsSubscribedMixin
-from users.profile import Favourites, Shopping_cart
+from users.serializer import IsSubscribedMixin
+from users.models import Favourites, Shopping_cart
 from users.serializer import MyUserSerializer
 
 from .models import Ingredient, IngredientValue, Recipe, Tag
+from .utils import ingredient_add_recipe
+
 
 User = get_user_model()
-
-
-class Base64ImageField(serializers.ImageField):
-    def to_internal_value(self, data):
-        if isinstance(data, six.string_types):
-            if 'data:' in data and ';base64,' in data:
-                header, data = data.split(';base64,')
-            try:
-                decoded_file = base64.b64decode(data)
-            except TypeError:
-                self.fail('invalid_image')
-            file_name = str(uuid.uuid4())[:12]
-            file_extension = self.get_file_extension(file_name, decoded_file)
-            complete_file_name = '%s.%s' % (file_name, file_extension,)
-            data = ContentFile(decoded_file, name=complete_file_name)
-
-        return super(Base64ImageField, self).to_internal_value(data)
-
-    def get_file_extension(self, file_name, decoded_file):
-        extension = imghdr.what(file_name, decoded_file)
-        extension = 'jpg' if extension == 'jpeg' else extension
-
-        return extension
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -145,7 +120,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         tags = validated_data.pop('tags')
         obj_recipe = Recipe.objects.create(**validated_data)
 
-        igredient_add_recipe(ingredients, obj_recipe)
+        ingredient_add_recipe(ingredients, obj_recipe)
 
         obj_recipe.save()
         obj_recipe.tags.set(tags)
@@ -157,7 +132,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         tags = validated_data.pop('tags')
         IngredientValue.objects.filter(recipe=instance).delete()
 
-        igredient_add_recipe(ingredients, instance)
+        ingredient_add_recipe(ingredients, instance)
 
         for (key, value) in validated_data.items():
             setattr(instance, key, value)
@@ -194,27 +169,10 @@ class UserSubscriptionsSerializer(serializers.ModelSerializer,
             return
         recipes_limit = int(recipes_limit)
         serializers = RecipeSubscriptionsSerializer(
-            obj.recipe.order_by('-pub_date')[:recipes_limit],
+            obj.recipe.reverse()[:recipes_limit],
             many=True,
         )
         return serializers.data
 
     def get_recipes_count(self, obj):
         return obj.recipe.count()
-
-
-def igredient_add_recipe(ingredients, obj):
-    recipe_ing = {}
-
-    for item in ingredients:
-        name_ing = item['id'].name
-        if name_ing not in recipe_ing:
-            recipe_ing[name_ing] = IngredientValue.objects.create(
-                ingredient=item['id'],
-                recipe=obj,
-                amount=item['amount']
-            )
-            obj.ingredients.add(item['id'])
-        else:
-            recipe_ing[name_ing].amount += item['amount']
-            recipe_ing[name_ing].save()

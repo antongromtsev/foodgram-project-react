@@ -7,10 +7,9 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from recipes.pagination import PaginationLimit
-from recipes.serializer import UserSubscriptionsSerializer
-from users.profile import Subscription
+from recipes.serializer import UserSubscriptionsSerializer, MyUserSerializer
+from users.models import Subscription
 
-from .serializer import MyUserSerializer
 
 User = get_user_model()
 
@@ -23,12 +22,25 @@ class MyUserViewSet(UserViewSet):
 
     @action(['get'], detail=False, url_path='subscriptions')
     def subscriptions(self, request):
-        user_sub = User.objects.filter(followed__follower=request.user)
-        page = self.paginate_queryset(user_sub)
-        serializer = UserSubscriptionsSerializer(
-            page, context=self.get_serializer_context(), many=True
+        queryset = User.objects.filter(
+            id__in=list(
+                request.user.following.values_list('user_sub', flat=True)
+            )
         )
-        return self.get_paginated_response(serializer.data)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = UserSubscriptionsSerializer(
+                page,
+                many=True,
+                context={'request': request}
+            )
+            return self.get_paginated_response(serializer.data)
+        serializer = UserSubscriptionsSerializer(
+            queryset,
+            many=True,
+            context={'request': request}
+        )
+        return Response(serializer.data)
 
     @action(['get', 'delete'], detail=True, url_path='subscribe')
     def subscribe(self, request, id=None):
@@ -40,9 +52,9 @@ class MyUserViewSet(UserViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         if request.method == 'DELETE':
-            Subscription.objects.filter(follower=user.pk, followed=id).delete()
+            Subscription.objects.filter(user=user.pk, user_sub=id).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        Subscription.objects.get_or_create(follower=user, followed=user_sub)
+        Subscription.objects.get_or_create(user=user, user_sub=user_sub)
         serializer = UserSubscriptionsSerializer(
             user_sub, context=self.get_serializer_context(),
         )
