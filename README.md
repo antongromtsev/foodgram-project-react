@@ -1,4 +1,4 @@
-![main.yaml](https://github.com/antongromtsev/foodgram-project-react/actions/workflows/main.yaml/badge.svg)
+![main.yml](https://github.com/antongromtsev/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 # foodgram-project-react
 Приложение «Продуктовый помощник»: сайт, на котором пользователи будут публиковать рецепты, добавлять чужие рецепты в избранное и подписываться на публикации других авторов. Сервис «Список покупок» позволит пользователям создавать список продуктов, которые нужно купить для приготовления выбранных блюд. Документация по работе с API после развертывания и настройки проекта будет доступна по адресу: http://127.0.0.1/api/docs
 ## Перед запуском проекта
