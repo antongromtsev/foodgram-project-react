@@ -77,7 +77,7 @@ class RecipeViewSet(ModelViewSet):
         recipe_shop = get_object_or_404(Recipe, pk=int(pk))
         if request.method == 'DELETE':
             ShoppingCart.objects.filter(user=user,
-                                         recipe=recipe_shop).delete()
+                                        recipe=recipe_shop).delete()
 
             return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -106,10 +106,8 @@ class RecipeViewSet(ModelViewSet):
              f'{item["amount__sum"]}\n' for item in cart_ingredients]
         )
 
-        response = HttpResponse(
+        return HttpResponse(
             content,
             content_type='text/plain',
             status=status.HTTP_201_CREATED
         )
-
-        return response

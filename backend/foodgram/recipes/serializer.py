@@ -58,15 +58,15 @@ class RecipeSerializer(serializers.ModelSerializer):
     def get_is_favorited(self, obj):
         user = self.context['request'].user
         return (
-            user.is_authenticated and
-            Favourites.objects.filter(user=user.pk, recipe=obj.pk).exists()
+            user.is_authenticated
+            and Favourites.objects.filter(user=user.pk, recipe=obj.pk).exists()
         )
 
     def get_is_in_shopping_cart(self, obj):
         user = self.context['request'].user
         return (
-            user.is_authenticated and
-            Shopping_cart.objects.filter(user=user.pk, recipe=obj.pk).exists()
+            user.is_authenticated
+            and Shopping_cart.objects.filter(user=user.pk, recipe=obj.pk).exists()
         )
 
     class Meta:
@@ -162,7 +162,7 @@ class UserSubscriptionsSerializer(serializers.ModelSerializer,
     def get_recipes(self, obj):
         recipes_limit = self.context['request'].GET.get('recipes_limit')
         if recipes_limit is None:
-            return
+            return None
         recipes_limit = int(recipes_limit)
         serializers = RecipeSubscriptionsSerializer(
             obj.recipe.reverse()[:recipes_limit],
