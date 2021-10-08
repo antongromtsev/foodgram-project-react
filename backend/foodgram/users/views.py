@@ -1,15 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
+from recipes.pagination import PaginationLimit
+from recipes.serializer import MyUserSerializer, UserSubscriptionsSerializer
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
-
-from recipes.pagination import PaginationLimit
-from recipes.serializer import UserSubscriptionsSerializer, MyUserSerializer
 from users.models import Subscription
-
 
 User = get_user_model()
 

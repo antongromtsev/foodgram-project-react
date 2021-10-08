@@ -1,15 +1,11 @@
-from drf_extra_fields.fields import Base64ImageField
-
 from django.contrib.auth import get_user_model
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-
-from users.serializer import IsSubscribedMixin
 from users.models import Favourites, Shopping_cart
-from users.serializer import MyUserSerializer
+from users.serializer import IsSubscribedMixin, MyUserSerializer
 
 from .models import Ingredient, IngredientValue, Recipe, Tag
 from .utility import ingredient_add_recipe
-
 
 User = get_user_model()
 

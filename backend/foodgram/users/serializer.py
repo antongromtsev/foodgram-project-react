@@ -1,10 +1,9 @@
 from django.contrib.auth import get_user_model
-from rest_framework import serializers
 from django.core.validators import MaxLengthValidator
+from rest_framework import serializers
 
 from .models import Subscription
 from .validators import unique_email_validator
-
 
 User = get_user_model()
 

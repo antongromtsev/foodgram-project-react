@@ -4,7 +4,6 @@ from django.shortcuts import get_object_or_404
 
 from .models import Favourites, Shopping_cart, Subscription
 
-
 User = get_user_model()
 
 
