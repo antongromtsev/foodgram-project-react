@@ -79,8 +79,8 @@ jobs:
     - name: executing remote ssh commands to deploy
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USER }}
+        host: ${{ secrets.HOST_SERVER }}
+        username: ${{ secrets.USER_SERVER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }} # Если ваш ssh-ключ защищён фразой-паролем
         stack_file_name: docker-compose.yaml
