@@ -8,7 +8,7 @@ from users.models import Favourites, Shopping_cart
 from users.serializer import MyUserSerializer
 
 from .models import Ingredient, IngredientValue, Recipe, Tag
-from .utils import ingredient_add_recipe
+from .utility import ingredient_add_recipe
 
 
 User = get_user_model()
