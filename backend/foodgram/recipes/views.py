@@ -8,7 +8,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from users.models import Favourites, Shopping_cart
+from users.models import Favourites, ShoppingCart
 
 from .filters import IngredientFilter, RecipeFilter
 from .models import Ingredient, IngredientValue, Recipe, Tag
@@ -76,12 +76,12 @@ class RecipeViewSet(ModelViewSet):
         user = request.user
         recipe_shop = get_object_or_404(Recipe, pk=int(pk))
         if request.method == 'DELETE':
-            Shopping_cart.objects.filter(user=user,
+            ShoppingCart.objects.filter(user=user,
                                          recipe=recipe_shop).delete()
 
             return Response(status=status.HTTP_204_NO_CONTENT)
 
-        Shopping_cart.objects.get_or_create(user=user, recipe=recipe_shop)
+        ShoppingCart.objects.get_or_create(user=user, recipe=recipe_shop)
         serializer = RecipeSubscriptionsSerializer(recipe_shop)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
