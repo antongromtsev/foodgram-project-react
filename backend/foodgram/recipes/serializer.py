@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-from users.models import Favourites, Shopping_cart
+from users.models import Favourites, ShoppingCart
 from users.serializer import IsSubscribedMixin, MyUserSerializer
 
 from .models import Ingredient, IngredientValue, Recipe, Tag
@@ -66,7 +66,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         return (
             user.is_authenticated
-            and Shopping_cart.objects.filter(
+            and ShoppingCart.objects.filter(
                 user=user.pk,
                 recipe=obj.pk).exists()
         )

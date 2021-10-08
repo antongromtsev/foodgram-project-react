@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 
-from .models import Favourites, Shopping_cart, Subscription
+from .models import Favourites, ShoppingCart, Subscription
 
 User = get_user_model()
 
@@ -26,5 +26,5 @@ class MyUserAdmin(admin.ModelAdmin):
 admin.site.unregister(User)
 admin.site.register(User, MyUserAdmin)
 admin.site.register(Favourites,)
-admin.site.register(Shopping_cart,)
+admin.site.register(ShoppingCart,)
 admin.site.register(Subscription,)
