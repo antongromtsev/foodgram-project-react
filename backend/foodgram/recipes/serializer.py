@@ -66,7 +66,9 @@ class RecipeSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         return (
             user.is_authenticated
-            and Shopping_cart.objects.filter(user=user.pk, recipe=obj.pk).exists()
+            and Shopping_cart.objects.filter(
+                user=user.pk,
+                recipe=obj.pk).exists()
         )
 
     class Meta:
