@@ -34,7 +34,7 @@ git clone https://github.com/antongromtsev/foodgram-project-react.git
 *для этого можно воспользоваться командой [scp](https://losst.ru/kopirovanie-fajlov-scp)*
 6. В настройка settings.py укажите адрес сервера 
     *Пример* ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'web', '84.201.136.198']
-4. Сделайте push на github.
+7. Сделайте push на github.
 ```bash
 git push
 ```  
