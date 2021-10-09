@@ -14,7 +14,6 @@ User = get_user_model()
 
 class MyUserViewSet(UserViewSet):
     queryset = User.objects.all()
-    #serializer_class = MyUserSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = PaginationLimit
 
