@@ -20,11 +20,7 @@ class MyUserViewSet(UserViewSet):
 
     @action(['get'], detail=False, url_path='subscriptions')
     def subscriptions(self, request):
-        queryset = User.objects.filter(
-            id__in=list(
-                request.user.following.values_list('user_sub', flat=True)
-            )
-        )
+        queryset = User.objects.filter(followed__follower=request.user)
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = UserSubscriptionsSerializer(

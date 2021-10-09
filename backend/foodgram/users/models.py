@@ -6,10 +6,16 @@ User = get_user_model()
 
 
 class Subscription(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE,
-                             related_name='following')
-    user_sub = models.ForeignKey(User, on_delete=models.CASCADE,
-                                 related_name='followed')
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE,
+        related_name='following',
+        verbose_name='Follower',
+    )
+    user_sub = models.ForeignKey(
+        User, on_delete=models.CASCADE,
+        related_name='followed',
+        verbose_name='Followed',
+    )
 
     class Meta:
         verbose_name = 'Following user'
@@ -26,10 +32,12 @@ class Favourites(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE,
         related_name='favorites',
+        verbose_name='User',
     )
     recipe = models.ForeignKey(
         Recipe, on_delete=models.CASCADE,
         related_name='favorites',
+        verbose_name='Recipe',
     )
 
     class Meta:
@@ -38,7 +46,7 @@ class Favourites(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['recipe', 'user'],
-                name='unique_favorite'
+                name='unique_favorite',
             )
         ]
 
@@ -47,10 +55,12 @@ class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE,
         related_name='shopping_cart',
+        verbose_name='User',
     )
     recipe = models.ForeignKey(
         Recipe, on_delete=models.CASCADE,
         related_name='shopping_cart',
+        verbose_name='Recipes in the shopping cart',
     )
 
     class Meta:

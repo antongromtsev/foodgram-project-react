@@ -3,7 +3,7 @@ from django.core.validators import MaxLengthValidator
 from rest_framework import serializers
 
 from .models import Subscription
-from .validators import unique_email_validator
+
 
 User = get_user_model()
 
@@ -23,9 +23,6 @@ class IsSubscribedMixin(serializers.Serializer):
 class MyUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
-        validators=[
-            unique_email_validator
-        ]
     )
     first_name = serializers.CharField(
         required=True,

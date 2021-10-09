@@ -87,13 +87,6 @@ class IngredientValueWriteSerializer(serializers.ModelSerializer):
         model = IngredientValue
         fields = ('id', 'amount', )
 
-    def create(self, validated_data):
-        self.context
-        return super().create(validated_data)
-
-    def save(self, **kwargs):
-        return super().save(**kwargs)
-
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
     image = Base64ImageField()

@@ -29,10 +29,12 @@ class Tag(models.Model):
 class Ingredient(models.Model):
     name = models.CharField(
         max_length=200,
+        verbose_name='Name ingredient',
     )
     measurement_unit = models.CharField(
         max_length=50,
-        default='г'
+        default='г',
+        verbose_name='Measurenet unit',
     )
 
     class Meta:
@@ -48,22 +50,30 @@ class Recipe(models.Model):
         User,
         related_name='recipe',
         on_delete=models.CASCADE,
+        verbose_name='Author recipe',
     )
     name = models.CharField(
         max_length=250,
+        verbose_name='Name recipe',
     )
-    image = models.ImageField(upload_to='recipes')
+    image = models.ImageField(
+        upload_to='recipes',
+        verbose_name='Image'
+    )
     text = models.TextField()
     ingredients = models.ManyToManyField(
         Ingredient,
         through='IngredientValue',
+        verbose_name='Ingredients',
     )
     tags = models.ManyToManyField(
         Tag,
         related_name='recipe',
+        verbose_name='Tags',
     )
     cooking_time = models.IntegerField(
-        validators=[MinValueValidator(1), ]
+        validators=[MinValueValidator(1), ],
+        verbose_name='Cooking time',
     )
     pub_date = models.DateTimeField(
         auto_now_add=True,
@@ -92,13 +102,16 @@ class IngredientValue(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
+        verbose_name='Ingredient',
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
+        verbose_name='Recipe'
     )
     amount = models.IntegerField(
-        validators=[MinValueValidator(1), ]
+        validators=[MinValueValidator(1), ],
+        verbose_name='Ingredient amount',
     )
 
     class Meta:
