@@ -30,7 +30,7 @@ git clone https://github.com/antongromtsev/foodgram-project-react.git
         * POSTGRES_PASSWORD=xxxxxxx - пароль для подключения к БД (установите свой)
         * DB_HOST=db - название сервиса (контейнера)
         * DB_PORT=5432 - порт для подключения к БД
-5. Скопируйте папку "nginx" с файлами конфигурации и файл с инструкциями для docker-compose "docker-compose.yaml" на сервер.
+5. Скопируйте файл "nginx_deploy.conf" с файлами конфигурации и файл с инструкциями для docker-compose "docker-compose_deploy.yaml" на сервер и убрать суфикс "_deploy" из названия.
 *для этого можно воспользоваться командой [scp](https://losst.ru/kopirovanie-fajlov-scp)*
 6. В настройка settings.py укажите адрес сервера 
     *Пример* ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'web', '84.201.136.198']
@@ -55,8 +55,10 @@ docker exec -it <имя_пользователя>_web_1 python manage.py loaddat
 ```
 *Предварительно необходимо скопировать файл "dump_ingredient.json", "dump_tag.json" на сервер*
 После завершения настройки проект будет запущен и доступен по адресу: http://HOST_SERVER/
-Образ на Docker Hub находиться по адресу: https://hub.docker.com/repository/docker/fenix217grom/foodgram-backend, 
-https://hub.docker.com/repository/docker/fenix217grom/foodgram-frontend,
+
+Образ на Docker Hub находиться по адресу:
+https://hub.docker.com/repository/docker/fenix217grom/foodgram-backend,
+https://hub.docker.com/repository/docker/fenix217grom/foodgram-frontend
 
 # Проект доступен по адресу:
 
