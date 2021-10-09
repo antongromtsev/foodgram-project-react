@@ -53,7 +53,8 @@ docker exec -it <имя_пользователя>_web_1 python manage.py creates
 ```bash
 docker exec -it <имя_пользователя>_web_1 python manage.py loaddata dump_ingredient.json (dump_tag.json)
 ```
-*Предварительно необходимо скопировать файл "dump_ingredient.json", "dump_tag.json" на сервер*
+*Предварительно необходимо скопировать файлы "dump_ingredient.json", "dump_tag.json" из папки "backend/foodgram" на сервер*
+
 После завершения настройки проект будет запущен и доступен по адресу: http://HOST_SERVER/
 
 Образ на Docker Hub находиться по адресу:
