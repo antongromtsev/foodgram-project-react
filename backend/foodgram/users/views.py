@@ -21,19 +21,12 @@ class MyUserViewSet(UserViewSet):
     def subscriptions(self, request):
         queryset = User.objects.filter(followed__user=request.user)
         page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = UserSubscriptionsSerializer(
-                page,
-                many=True,
-                context={'request': request}
-            )
-            return self.get_paginated_response(serializer.data)
         serializer = UserSubscriptionsSerializer(
-            queryset,
+            page,
             many=True,
             context={'request': request}
         )
-        return Response(serializer.data)
+        return self.get_paginated_response(serializer.data)
 
     @action(['get', 'delete'], detail=True, url_path='subscribe')
     def subscribe(self, request, id=None):
