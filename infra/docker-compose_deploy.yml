@@ -8,7 +8,7 @@ volumes:
 services:
    
   frontend:
-    image: fenix217grom/foodgram-frontend
+    image: fenix217grom/foodgram-frontend:latest
     volumes:
       - ../frontend/:/app/result_build
   
@@ -21,7 +21,7 @@ services:
       - ./.env
   
   web:
-    image: fenix217grom/foodgram-backend
+    image: fenix217grom/foodgram-backend:latest
     restart: always
     volumes:
       - static_value:/code/static/
