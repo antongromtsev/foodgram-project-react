@@ -14,17 +14,16 @@ User = get_user_model()
 
 class MyUserViewSet(UserViewSet):
     queryset = User.objects.all()
+
     permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = PaginationLimit
 
     @action(['get'], detail=False, url_path='subscriptions')
     def subscriptions(self, request):
-        queryset = User.objects.filter(followed__user=request.user)
-        page = self.paginate_queryset(queryset)
+        user_sub = User.objects.filter(followed__user=request.user)
+        page = self.paginate_queryset(user_sub)
         serializer = UserSubscriptionsSerializer(
-            page,
-            many=True,
-            context={'request': request}
+            page, context=self.get_serializer_context(), many=True
         )
         return self.get_paginated_response(serializer.data)
 
