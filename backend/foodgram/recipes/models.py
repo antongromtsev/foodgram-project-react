@@ -116,3 +116,12 @@ class IngredientValue(models.Model):
 
     class Meta:
         verbose_name = 'Ingredient amount'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['ingredient', 'recipe'],
+                name='unique_ingredient',
+            )
+        ]
+
+    def __str__(self):
+        return str(self.ingredient)

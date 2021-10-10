@@ -23,9 +23,12 @@ class Subscription(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'user_sub'],
-                name='unique_following'
+                name='unique_following',
             )
         ]
+
+    def __str__(self):
+        return str(self.user) + str(self.user_sub)
 
 
 class Favourites(models.Model):
@@ -50,6 +53,9 @@ class Favourites(models.Model):
             )
         ]
 
+    def __str__(self):
+        return str(self.user)
+
 
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
@@ -72,3 +78,6 @@ class ShoppingCart(models.Model):
                 name='unique_shopping_cart'
             )
         ]
+
+    def __str__(self):
+        return str(self.user)

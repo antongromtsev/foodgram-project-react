@@ -93,9 +93,7 @@ class IngredientValueWriteSerializer(serializers.ModelSerializer):
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
-    ingredients = IngredientValueWriteSerializer(many=True, error_messages={
-        'ingredients': 'Количество ингредиента должно быть целым числом!'
-    })
+    ingredients = IngredientValueWriteSerializer(many=True)
     cooking_time = serializers.IntegerField(error_messages={
         'invalid': 'Время приготовления должно быть целым числом!'
     })
@@ -107,23 +105,29 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'name', 'text', 'cooking_time',
         )
 
-    def to_internal_value(self, data):
-        ingredients = data.get('ingredients')
-        try:
-            data = int(ingredients['amount'])
-        except (ValueError, TypeError):
-            raise serializers.ValidationError({
-                'amount':
-                'Количество ингредиента должно быть целым числом!'
-            })
-        return super().to_internal_value(data)
-
     def to_representation(self, instance):
         serializer = RecipeSerializer(
             instance,
             context=self.context,
         )
         return serializer.data
+
+    def validate(self, data):
+        ingredients = self.initial_data.get('ingredients')
+        correct_ingredients = []
+        for item in ingredients:
+            if correct_ingredients.count(item['id']):
+                raise serializers.ValidationError({
+                    'ingredients': 'В рецепте дублирующиеся ингредиенты!'
+                })
+            else:
+                correct_ingredients.append(item['id'])
+            if int(item['amount']) < 0:
+                raise serializers.ValidationError({
+                    'ingredients':
+                    'Убедитесь, что значение количества ингредиента больше 0!'
+                })
+        return data
 
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
