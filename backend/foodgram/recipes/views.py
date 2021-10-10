@@ -49,6 +49,9 @@ class RecipeViewSet(ModelViewSet):
             return RecipeSerializer
         return RecipeWriteSerializer
 
+    def perform_create(self, serializer): 
+        serializer.save(author=self.request.user)
+
     @action(
         ['get', 'delete'], detail=True,
         url_path='favorite', permission_classes=[IsAuthorAdminOrReadOnly]
