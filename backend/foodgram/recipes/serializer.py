@@ -82,6 +82,9 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class IngredientValueWriteSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    amount = serializers.IntegerField(error_messages={
+        'invalid': 'Количество ингредиента должно быть целым числом!'
+    })
 
     class Meta:
         model = IngredientValue
@@ -90,7 +93,12 @@ class IngredientValueWriteSerializer(serializers.ModelSerializer):
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
-    ingredients = IngredientValueWriteSerializer(many=True)
+    ingredients = IngredientValueWriteSerializer(many=True, error_messages={
+        'ingredients': 'Количество ингредиента должно быть целым числом!'
+    })
+    cooking_time = serializers.IntegerField(error_messages={
+        'invalid': 'Время приготовления должно быть целым числом!'
+    })
 
     class Meta:
         model = Recipe
@@ -98,6 +106,17 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'ingredients', 'tags', 'image',
             'name', 'text', 'cooking_time',
         )
+
+    def to_internal_value(self, data):
+        ingredients = data.get('ingredients')
+        try:
+            data = int(ingredients['amount'])
+        except (ValueError, TypeError):
+            raise serializers.ValidationError({
+                'amount':
+                'Количество ингредиента должно быть целым числом!'
+            })
+        return super().to_internal_value(data)
 
     def to_representation(self, instance):
         serializer = RecipeSerializer(
