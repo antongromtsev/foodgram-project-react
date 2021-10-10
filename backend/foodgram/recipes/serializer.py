@@ -1,9 +1,9 @@
 from django.contrib.auth import get_user_model
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-from users.serializer import UserRepresentationSerializer
+
 from users.models import Favourites, ShoppingCart
-from users.serializer import IsSubscribedMixin, MyUserSerializer
+from users.serializer import IsSubscribedMixin, UserRepresentationSerializer
 
 from .models import Ingredient, IngredientValue, Recipe, Tag
 from .utility import ingredient_add_recipe
@@ -95,9 +95,9 @@ class IngredientValueWriteSerializer(serializers.ModelSerializer):
 class RecipeWriteSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
     ingredients = IngredientValueWriteSerializer(many=True)
-    # cooking_time = serializers.IntegerField(error_messages={
-    #     'invalid': 'Время приготовления должно быть целым числом!'
-    # })
+    cooking_time = serializers.IntegerField(error_messages={
+        'invalid': 'Время приготовления должно быть целым числом!'
+    })
 
     class Meta:
         model = Recipe

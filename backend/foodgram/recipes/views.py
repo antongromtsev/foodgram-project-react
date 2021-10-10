@@ -2,12 +2,13 @@ from django.db.models import Sum
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as filters
-from recipes.serializer import RecipeSubscriptionsSerializer
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+
+from recipes.serializer import RecipeSubscriptionsSerializer
 from users.models import Favourites, ShoppingCart
 
 from .filters import IngredientFilter, RecipeFilter
@@ -49,7 +50,7 @@ class RecipeViewSet(ModelViewSet):
             return RecipeSerializer
         return RecipeWriteSerializer
 
-    def perform_create(self, serializer): 
+    def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
     @action(
