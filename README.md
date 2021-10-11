@@ -64,10 +64,3 @@ https://hub.docker.com/repository/docker/fenix217grom/foodgram-frontend
 # Проект доступен по адресу:
 
 foodgram-project-react: http://84.201.136.198
-
-### Логин и пароль для входа от имени администратора:
-
-```
-email: f@g.com
-password: admin
-```
