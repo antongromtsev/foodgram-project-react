@@ -83,7 +83,8 @@ class RecipeSerializer(serializers.ModelSerializer):
 class IngredientValueWriteSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
     amount = serializers.IntegerField(error_messages={
-        'invalid': 'Количество ингредиента должно быть целым числом!'
+        'invalid':
+        'Количество ингредиента должно быть целым, положительным числом!'
     })
 
     class Meta:
@@ -95,7 +96,8 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
     ingredients = IngredientValueWriteSerializer(many=True)
     cooking_time = serializers.IntegerField(error_messages={
-        'invalid': 'Время приготовления должно быть целым числом!'
+        'invalid':
+        'Время приготовления должно быть целым, положительным числом!'
     })
 
     class Meta:
@@ -127,6 +129,13 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                     'ingredients':
                     'Убедитесь, что значение количества ингредиента больше 0!'
                 })
+            
+        cooking_time = self.initial_data.get('cooking_time')
+        if cooking_time <= 0:
+            raise serializers.ValidationError({
+                'cooking_time':
+                'Значение времени не может быть меньше нуля!'
+            })
         return data
 
     def create(self, validated_data):
