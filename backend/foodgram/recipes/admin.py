@@ -28,6 +28,7 @@ class RecipeAdmin(admin.ModelAdmin):
     )
     list_filter = ("author", "name", "tags")
     empty_value_display = "-пусто-"
+    search_fields = ("name", )
     inlines = (IngredientValueInline,)
 
     def added_to_favorites(self, obj):

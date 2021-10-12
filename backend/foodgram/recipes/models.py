@@ -40,12 +40,12 @@ class Ingredient(models.Model):
     class Meta:
         verbose_name = 'Ingredient'
         verbose_name_plural = 'Ingredients'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['name', 'measurement_unit'],
-                name='unique_ingredient',
-            )
-        ]
+        # constraints = [
+        #     models.UniqueConstraint(
+        #         fields=['name', 'measurement_unit'],
+        #         name='unique_ingredient',
+        #     )
+        # ]
 
     def __str__(self):
         return self.name
@@ -125,7 +125,7 @@ class IngredientValue(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['ingredient', 'recipe'],
-                name='unique_ingredient',
+                name='unique_ingredient_recipe',
             )
         ]
 
